@@ -3,6 +3,7 @@ import {
   View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, Button, Alert, TextInput 
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ClientsList({ navigation }) {
   const [clients, setClients] = useState([]);
@@ -11,17 +12,18 @@ export default function ClientsList({ navigation }) {
   const [passwordModalVisible, setPasswordModalVisible] = useState(true);
   const [passwordInput, setPasswordInput] = useState('');
 
-  useEffect(() => {
-    if (!passwordModalVisible) {
-      loadClients();
-    }
-  }, [passwordModalVisible]);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!passwordModalVisible) {
+        loadClients();
+      }
+    }, [passwordModalVisible])
+  );
 
   const loadClients = async () => {
     try {
       const data = await AsyncStorage.getItem('clients');
       const loadedClients = data ? JSON.parse(data) : [];
-      // Сортиране по дата
       loadedClients.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
       setClients(loadedClients);
     } catch (e) {
@@ -30,12 +32,11 @@ export default function ClientsList({ navigation }) {
   };
 
   const checkPassword = () => {
-    console.log("Въведена парола:", passwordInput);
     if (passwordInput.trim() === '1234') {
       setPasswordModalVisible(false);
       setPasswordInput('');
     } else {
-      Alert.alert('Грешна парола', 'Въведената парола е неправилна. Опитайте пак.');
+      Alert.alert('Грешна парола', 'Опитайте отново.');
       setPasswordInput('');
     }
   };
@@ -91,22 +92,17 @@ export default function ClientsList({ navigation }) {
 
   if (passwordModalVisible) {
     return (
-      <Modal
-        visible={passwordModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => {}}
-      >
+      <Modal visible={true} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.passwordModalContent}>
-            <Text style={styles.modalTitle}>Въведете парола за достъп</Text>
+            <Text style={styles.modalTitle}>🔒 Въведи парола</Text>
             <TextInput
               style={styles.input}
               value={passwordInput}
               onChangeText={setPasswordInput}
               placeholder="Парола"
-              secureTextEntry={true}
-              autoFocus={true}
+              secureTextEntry
+              autoFocus
               onSubmitEditing={checkPassword}
               returnKeyType="done"
             />
@@ -121,10 +117,7 @@ export default function ClientsList({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Button
-        title="➕ Добави клиент"
-        onPress={() => navigation.navigate('AddClient')}
-      />
+      <Button title="➕ Добави клиент" onPress={() => navigation.navigate('AddClient')} />
 
       {clients.length === 0 ? (
         <Text style={styles.emptyText}>Няма запазени клиенти</Text>
@@ -147,21 +140,17 @@ export default function ClientsList({ navigation }) {
           <View style={styles.modalContent}>
             {selectedClient && (
               <>
-                <Text style={styles.modalTitle}>Детайли за клиента</Text>
+                <Text style={styles.modalTitle}>Детайли</Text>
                 <Text style={styles.modalText}><Text style={{ fontWeight: 'bold' }}>Име:</Text> {selectedClient.name}</Text>
-                <Text style={styles.modalText}>
-                  <Text style={{ fontWeight: 'bold' }}>Дата и час:</Text>{' '}
-                  {new Date(selectedClient.datetime).toLocaleString()}
-                </Text>
-                <Text style={styles.modalText}><Text style={{ fontWeight: 'bold' }}>Услуга:</Text> {selectedClient.service || 'Не е зададена'}</Text>
+                <Text style={styles.modalText}><Text style={{ fontWeight: 'bold' }}>Местоположение:</Text> {selectedClient.location}</Text>
+                <Text style={styles.modalText}><Text style={{ fontWeight: 'bold' }}>Дата и час:</Text> {new Date(selectedClient.datetime).toLocaleString()}</Text>
+                <Text style={styles.modalText}><Text style={{ fontWeight: 'bold' }}>Цена:</Text> {selectedClient.price} лв</Text>
+                <Text style={styles.modalText}><Text style={{ fontWeight: 'bold' }}>Услуга:</Text> {selectedClient.service || '—'}</Text>
+                <Text style={styles.modalText}><Text style={{ fontWeight: 'bold' }}>Бележка:</Text> {selectedClient.note || '—'}</Text>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: 20 }}>
                   <Button title="Затвори" onPress={closeDetails} />
-                  <Button
-                    title="Изтрий"
-                    color="red"
-                    onPress={() => deleteClient(selectedClient.id)}
-                  />
+                  <Button title="Изтрий" color="red" onPress={() => deleteClient(selectedClient.id)} />
                 </View>
               </>
             )}
@@ -188,7 +177,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 25,
     borderRadius: 10,
-    width: '80%',
+    width: '90%',
     alignItems: 'flex-start',
   },
   modalTitle: {
@@ -214,5 +203,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
     paddingHorizontal: 10,
+    marginTop: 10,
   },
 });

@@ -51,8 +51,6 @@ export default function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
-
-      {/* Тук долу под навигацията слагаш движещия се трактор */}
       <MovingTractor />
     </View>
   );

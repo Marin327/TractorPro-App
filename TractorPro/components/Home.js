@@ -21,7 +21,7 @@ export default function Home({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [password, setPassword] = useState('');
 
-  const ADMIN_PASSWORD = '1234'; // смени с твоя парола
+  const ADMIN_PASSWORD = '1234'; 
 
   const handleCall = () => {
     Linking.openURL(`tel:${phoneNumber}`);
@@ -96,7 +96,6 @@ export default function Home({ navigation }) {
         </Animated.View>
       </TouchableWithoutFeedback>
 
-      {/* Модал за въвеждане на парола */}
       <Modal
         transparent
         animationType="slide"

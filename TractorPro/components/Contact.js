@@ -16,11 +16,11 @@ import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 export default function Contact() {
   const contactInfo = {
     name: 'Марин Маринов',
-    phone: '0897 082 919',
-    email: 'marin_9308@abv.bg',
-    address: 'Село Сатовча, ул. Александър Стамболийски 7',
-    instagram: 'https://www.instagram.com/marinovmarinn/',
-    facebook: 'https://www.facebook.com/marin.marinov.948/',
+    phone: '088 888 8888',
+    email: 'marin_@abv.bg',
+    address: 'Село Сатовча, ул. Шопов 7',
+    instagram: 'https://www.instagram.com',
+    facebook: 'https://www.facebook.com',
   };
 
   const [modalVisible, setModalVisible] = useState(false);

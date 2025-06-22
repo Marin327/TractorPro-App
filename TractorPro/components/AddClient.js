@@ -17,14 +17,14 @@ export default function AddClient({ navigation }) {
   const [price, setPrice] = useState('');
   const [note, setNote] = useState('');
   
-  // Дата и час като Date обект
+  
   const [date, setDate] = useState(new Date());
   
-  // Управлява дали календарът е видим
+  
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const onChange = (event, selectedDate) => {
-    setShowDatePicker(Platform.OS === 'ios'); // На Android затваряме picker
+    setShowDatePicker(Platform.OS === 'ios'); 
     if (selectedDate) {
       setDate(selectedDate);
     }
@@ -41,7 +41,7 @@ export default function AddClient({ navigation }) {
       id,
       name,
       location,
-      date: date.toISOString(), // Запазваме ISO формат
+      date: date.toISOString(), 
       price,
       note,
       isDone: false,
@@ -76,7 +76,6 @@ export default function AddClient({ navigation }) {
         onChangeText={setLocation}
       />
 
-      {/* Бутон за избор на дата и час */}
       <TouchableOpacity
         style={styles.input}
         onPress={() => setShowDatePicker(true)}
@@ -89,11 +88,11 @@ export default function AddClient({ navigation }) {
       {showDatePicker && (
         <DateTimePicker
           value={date}
-          mode="datetime"  // Избираме дата + час
+          mode="datetime"  
           is24Hour={true}
           display="default"
           onChange={onChange}
-          minimumDate={new Date()} // Не може да се избира минала дата
+          minimumDate={new Date()} 
         />
       )}
 

@@ -1,42 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, Button, Alert } from 'react-native';
+import { 
+  View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, Button, Alert, TextInput 
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ClientsList({ navigation }) {
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [userRole, setUserRole] = useState(null);
+  const [passwordModalVisible, setPasswordModalVisible] = useState(true);
+  const [passwordInput, setPasswordInput] = useState('');
 
   useEffect(() => {
-    const checkUserRole = async () => {
-      const role = await AsyncStorage.getItem('userRole');
-      setUserRole(role);
-      if (role !== 'admin') {
-        Alert.alert('Достъп отказан', 'Само администратор може да вижда списъка с клиенти.');
-        navigation.goBack();
-      }
-    };
-    checkUserRole();
-  }, [navigation]);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      if (userRole === 'admin') {
-        loadClients();
-      }
-    });
-    return unsubscribe;
-  }, [navigation, userRole]);
+    if (!passwordModalVisible) {
+      loadClients();
+    }
+  }, [passwordModalVisible]);
 
   const loadClients = async () => {
     try {
       const data = await AsyncStorage.getItem('clients');
-      const clients = data ? JSON.parse(data) : [];
-      clients.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
-      setClients(clients);
+      const loadedClients = data ? JSON.parse(data) : [];
+      // Сортиране по дата
+      loadedClients.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+      setClients(loadedClients);
     } catch (e) {
       console.error('Грешка при зареждане:', e);
+    }
+  };
+
+  const checkPassword = () => {
+    console.log("Въведена парола:", passwordInput);
+    if (passwordInput.trim() === '1234') {
+      setPasswordModalVisible(false);
+      setPasswordInput('');
+    } else {
+      Alert.alert('Грешна парола', 'Въведената парола е неправилна. Опитайте пак.');
+      setPasswordInput('');
     }
   };
 
@@ -89,12 +89,33 @@ export default function ClientsList({ navigation }) {
     );
   };
 
-  if (userRole !== 'admin') {
-    // Ако не е админ, не показваме съдържание
+  if (passwordModalVisible) {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={{ fontSize: 18, color: 'red' }}>Нямате достъп до този екран.</Text>
-      </View>
+      <Modal
+        visible={passwordModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => {}}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.passwordModalContent}>
+            <Text style={styles.modalTitle}>Въведете парола за достъп</Text>
+            <TextInput
+              style={styles.input}
+              value={passwordInput}
+              onChangeText={setPasswordInput}
+              placeholder="Парола"
+              secureTextEntry={true}
+              autoFocus={true}
+              onSubmitEditing={checkPassword}
+              returnKeyType="done"
+            />
+            <View style={{ marginTop: 20, width: '100%' }}>
+              <Button title="Вход" onPress={checkPassword} />
+            </View>
+          </View>
+        </View>
+      </Modal>
     );
   }
 
@@ -178,5 +199,20 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginBottom: 10,
+  },
+  passwordModalContent: {
+    backgroundColor: 'white',
+    padding: 25,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#aaa',
+    borderRadius: 5,
+    width: '100%',
+    height: 40,
+    paddingHorizontal: 10,
   },
 });

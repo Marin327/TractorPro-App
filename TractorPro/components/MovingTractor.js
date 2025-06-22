@@ -11,7 +11,7 @@ export default function MovingTractor() {
     Animated.loop(
       Animated.sequence([
         Animated.timing(moveAnim, {
-          toValue: screenWidth - 200, // широчина на иконата
+          toValue: screenWidth - 200,
           duration: 3500,
           useNativeDriver: true,
         }),

@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  Platform
+  Platform,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,18 +16,12 @@ export default function AddClient({ navigation }) {
   const [location, setLocation] = useState('');
   const [price, setPrice] = useState('');
   const [note, setNote] = useState('');
-  
-  
   const [date, setDate] = useState(new Date());
-  
-  
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const onChange = (event, selectedDate) => {
-    setShowDatePicker(Platform.OS === 'ios'); 
-    if (selectedDate) {
-      setDate(selectedDate);
-    }
+    setShowDatePicker(Platform.OS === 'ios');
+    if (selectedDate) setDate(selectedDate);
   };
 
   const saveClient = async () => {
@@ -36,12 +30,11 @@ export default function AddClient({ navigation }) {
       return;
     }
 
-    const id = Date.now().toString();
     const newClient = {
-      id,
+      id: Date.now().toString(),
       name,
       location,
-      date: date.toISOString(), 
+      datetime: date.toISOString(), // 🟢 правилният ключ
       price,
       note,
       isDone: false,
@@ -61,60 +54,28 @@ export default function AddClient({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Име"
-        placeholderTextColor="#5a7db8"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Местоположение"
-        placeholderTextColor="#5a7db8"
-        value={location}
-        onChangeText={setLocation}
-      />
-
-      <TouchableOpacity
-        style={styles.input}
-        onPress={() => setShowDatePicker(true)}
-      >
-        <Text style={{ color: '#123466' }}>
-          {date.toLocaleDateString()} {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </Text>
+      <TextInput style={styles.input} placeholder="Име" value={name} onChangeText={setName} />
+      <TextInput style={styles.input} placeholder="Местоположение" value={location} onChangeText={setLocation} />
+      
+      <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
+        <Text>{date.toLocaleDateString()} {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
       </TouchableOpacity>
 
       {showDatePicker && (
         <DateTimePicker
           value={date}
-          mode="datetime"  
+          mode="datetime"
           is24Hour={true}
           display="default"
           onChange={onChange}
-          minimumDate={new Date()} 
+          minimumDate={new Date()}
         />
       )}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Цена"
-        placeholderTextColor="#5a7db8"
-        value={price}
-        onChangeText={setPrice}
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={[styles.input, { height: 80 }]}
-        placeholder="Бележка (по избор)"
-        placeholderTextColor="#5a7db8"
-        value={note}
-        onChangeText={setNote}
-        multiline
-        textAlignVertical="top"
-      />
+      <TextInput style={styles.input} placeholder="Цена" value={price} onChangeText={setPrice} keyboardType="numeric" />
+      <TextInput style={[styles.input, { height: 80 }]} placeholder="Бележка (по избор)" value={note} onChangeText={setNote} multiline />
 
-      <TouchableOpacity style={styles.saveButton} onPress={saveClient} activeOpacity={0.8}>
+      <TouchableOpacity style={styles.saveButton} onPress={saveClient}>
         <Text style={styles.saveButtonText}>Запази</Text>
       </TouchableOpacity>
     </View>
@@ -122,32 +83,20 @@ export default function AddClient({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#f0f5ff',
-    flex: 1,
-    padding: 20,
-  },
+  container: { padding: 20, flex: 1 },
   input: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: Platform.OS === 'ios' ? 15 : 10,
-    fontSize: 16,
-    marginBottom: 15,
+    backgroundColor: '#fff',
+    borderColor: '#aaa',
     borderWidth: 1,
-    borderColor: '#4a90e2',
-    color: '#123466',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 10,
   },
   saveButton: {
     backgroundColor: '#4a90e2',
-    borderRadius: 12,
     paddingVertical: 15,
+    borderRadius: 10,
     alignItems: 'center',
-    marginTop: 10,
   },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: '700',
-  },
+  saveButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
 });

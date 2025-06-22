@@ -1,5 +1,3 @@
-// components/Notification.js
-
 import * as Notifications from 'expo-notifications';
 
 Notifications.setNotificationHandler({
@@ -10,13 +8,6 @@ Notifications.setNotificationHandler({
   }),
 });
 
-/**
- * Планира локално известие за ден преди задачата
- * @param {string} name - Име на клиента
- * @param {string} location - Местоположение
- * @param {string} date - Дата във формат YYYY-MM-DD
- * @param {string} price - Цена в лв
- */
 export const scheduleClientNotification = async (name, location, date, price) => {
   try {
     const taskDate = new Date(date);

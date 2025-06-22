@@ -116,7 +116,6 @@ export default function Contact() {
         </View>
       </ScrollView>
 
-      {/* Модален прозорец за писане на имейл */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -176,10 +175,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     marginBottom: 15,
-    color: '#1565c0', // наситено синьо
+    color: '#1565c0', 
   },
   card: {
-    backgroundColor: '#e3f2fd', // много светло синьо
+    backgroundColor: '#e3f2fd', 
     padding: 20,
     borderRadius: 12,
     elevation: 3,
@@ -196,7 +195,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     marginLeft: 15,
-    color: '#0d47a1', // тъмно синьо
+    color: '#0d47a1', 
   },
   emailButton: {
     marginTop: 20,
